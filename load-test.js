@@ -10,8 +10,8 @@ async function blastWebhook() {
     // Object to collate our results
     const summary = {
         totalSent: concurrentRequests,
-        success_200: 0,
-        rateLimited_429: 0,
+        success_200: [],
+        rateLimited_429: [],
         otherErrors: 0
     };
 
@@ -26,12 +26,17 @@ async function blastWebhook() {
             body: JSON.stringify({ eventId: index, timestamp: new Date() })
         })
         .then(res => {
+            // if (res.status === 200) {
+            //     summary.success_200++;
+            // } else if (res.status === 429) {
+            //     summary.rateLimited_429++;
+            // } else {
+            //     summary.otherErrors++;
+            // }
             if (res.status === 200) {
-                summary.success_200++;
+                summary.success_200.push(index);
             } else if (res.status === 429) {
-                summary.rateLimited_429++;
-            } else {
-                summary.otherErrors++;
+                summary.rateLimited_429.push(index);
             }
         })
         .catch(err => {
